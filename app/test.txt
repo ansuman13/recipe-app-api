@@ -1,5 +1,0 @@
-hi this is a test to check ci build is working or not
-
-currently it's not.
-Lets say whenever i push some code to github(master branch), travis will run the code "
-python manage.py test && flake8" cool 😎.
