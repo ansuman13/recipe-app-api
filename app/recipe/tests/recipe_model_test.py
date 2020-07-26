@@ -30,3 +30,15 @@ class RecipeAppTest(TestCase):
             user=sample_user()
         )
         self.assertEqual(str(ingredient), ingredient.name)
+
+    def test_reciepe_str(self):
+        """ Test the Reciepe Model for str representation """
+
+        recipe = models.Recipe.objects.create(
+            user=sample_user(),
+            title='Panner Tika curry masala',
+            price=50.12,
+            time_minutes=5
+        )
+
+        self.assertEqual(str(recipe), recipe.title)
