@@ -97,9 +97,9 @@ class PrivateIngredientTests(TestCase):
     def test_ingredient_create_success(self):
         payload = {'name': 'Vinegar'}
         res = self.client.post(INGREDIENT_URL, payload)
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         exists = Ingredient.objects.filter(
-            name=payload.get('payload'),
+            name=payload.get('name'),
             user=self.user
         ).exists()
         self.assertTrue(exists)
