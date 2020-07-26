@@ -1,13 +1,13 @@
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 from django.urls import reverse
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from core.models import Tag
+from core.models import Tag, Ingredient
 from recipe.serializers import TagSerializer
 
 TAGS_URL = reverse('recipe:tag-list')
+INGREDIENT_URL = reverse('recipe:ingredient-list')
 
 
 class PublicTagApiTests(TestCase):
@@ -51,7 +51,7 @@ class PrivateTagApiTests(TestCase):
             email='ansuman12@yopmail.com',
             password='ansuman@123'
         )
-        tag = Tag.objects.create(user=user2, name='HoneyMoon')
+        Tag.objects.create(user=user2, name='HoneyMoon')
         tag2 = Tag.objects.create(user=self.user, name='NakedMoon')
 
         res = self.client.get(TAGS_URL)
@@ -62,12 +62,49 @@ class PrivateTagApiTests(TestCase):
     def test_create_tag_successful(self):
         """ Test create tag successful """
 
-        payload = {'name' :'ZebroCross'}
+        payload = {'name': 'ZebroCross'}
         res = self.client.post(TAGS_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
     def test_invalid_tag_fail(self):
-        payload = {'name':''}
+        payload = {'name': ''}
         res = self.client.post(TAGS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class PublicIngredientTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_ingredient_api_public_test(self):
+        res = self.client.get(INGREDIENT_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateIngredientTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            email='ansuman@yopmail.com',
+            password='ansuman123',
+            name='ansuman singh'
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_ingredient_create_success(self):
+        payload = {'name': 'Vinegar'}
+        res = self.client.post(INGREDIENT_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        exists = Ingredient.objects.filter(
+            name=payload.get('payload'),
+            user=self.user
+        ).exists()
+        self.assertTrue(exists)
+
+    def test_invalid_ingredient_create_fail(self):
+        payload = {'name': ''}
+        res = self.client.post(INGREDIENT_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

@@ -1,5 +1,4 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError
 from django.test import TestCase
 from unittest.mock import patch

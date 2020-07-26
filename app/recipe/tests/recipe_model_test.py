@@ -21,3 +21,12 @@ class RecipeAppTest(TestCase):
             user=sample_user()
         )
         self.assertEqual(str(tag), tag.name)
+
+    def test_ingredient_str(self):
+        """ Test the Ingredient model str representation """
+
+        ingredient = models.Ingredient.objects.create(
+            name='Peper',
+            user=sample_user()
+        )
+        self.assertEqual(str(ingredient), ingredient.name)
